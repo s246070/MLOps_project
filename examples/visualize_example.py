@@ -114,12 +114,8 @@ def example_with_mock_data():
 
 
 if __name__ == "__main__":
-    # Uncomment the example you want to run:
-    
-    # example_with_mock_data()
+    example_with_wandb_history()
     example_confusion_matrix()
-    # example_roc_curve()
-    # example_feature_importance()
-    # example_with_wandb_history()
-    
-    print("Uncomment one of the example functions above to run it.")
+    example_roc_curve()
+    example_feature_importance()
+    example_with_mock_data()
