@@ -1,0 +1,14 @@
+# `dependabot.yaml` file with
+# customized schedule for version updates
+
+version: 2
+updates:
+  # Keep uv dependencies up to date
+  - package-ecosystem: "uv"
+    directory: "/"
+    # Check the uv registry every week on Tuesday at 17:00 CET
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "17:00"
+      timezone: "Europe/Copenhagen"
