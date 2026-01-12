@@ -20,10 +20,6 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
 
-    - name: Run tests with coverage
-      run: |
-        uv run coverage run -m pytest -v
-        uv run coverage report -m
 
     - name: Setup uv
       uses: astral-sh/setup-uv@v7
@@ -34,6 +30,7 @@ jobs:
       run: |
         uv sync --dev --locked
 
-    - name: Test with pytest
+    - name: Run tests with coverage
       run: |
-        uv run pytest -v
+        uv run coverage run -m pytest -v
+        uv run coverage report -m
