@@ -1,0 +1,35 @@
+{
+  "os": "macOS-14.2-arm64-arm-64bit",
+  "python": "CPython 3.12.5",
+  "startedAt": "2026-01-15T09:02:33.372002Z",
+  "program": "-m mlops_project.train",
+  "git": {
+    "remote": "https://github.com/s246070/MLOps_project.git",
+    "commit": "35814fa0ef723ae712eb1fd93b8c470b9ff745af"
+  },
+  "email": "s240745@dtu.dk",
+  "root": "/Users/k/Documents/GitHub/MLOps_project",
+  "host": "mbptilhekamilla.students.clients.local",
+  "executable": "/opt/anaconda3/envs/IntelligentSystems/bin/python",
+  "cpu_count": 8,
+  "cpu_count_logical": 8,
+  "disk": {
+    "/": {
+      "total": "494384795648",
+      "used": "324310700032"
+    }
+  },
+  "memory": {
+    "total": "8589934592"
+  },
+  "apple": {
+    "name": "Apple M3",
+    "ecpuCores": 4,
+    "pcpuCores": 4,
+    "gpuCores": 10,
+    "memoryGb": 8,
+    "swapTotalBytes": "8589934592",
+    "ramTotalBytes": "8589934592"
+  },
+  "writerId": "bvddav777rxxof7aq2chvn0kxy1pr06y"
+}
