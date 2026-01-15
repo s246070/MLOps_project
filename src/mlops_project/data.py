@@ -27,9 +27,7 @@ def preprocess_data(
     y = df["Survived"].values
     X = df.drop(columns=["Survived"]).values
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     X_train = torch.tensor(X_train, dtype=torch.float32)
     X_test = torch.tensor(X_test, dtype=torch.float32)
@@ -81,4 +79,3 @@ class MyDataset(Dataset):
 
 if __name__ == "__main__":
     typer.run(preprocess_data)
-

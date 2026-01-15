@@ -20,6 +20,7 @@ FEATURE_NAMES = [
     "Embarked",
 ]
 
+
 def evaluate(model_path: str = "models/modelweights.pth"):
     run = wandb.init(
         project="titanic",
@@ -39,15 +40,15 @@ def evaluate(model_path: str = "models/modelweights.pth"):
     weights = model.linear.weight.detach().cpu().numpy().flatten()
     bias = model.linear.bias.detach().cpu().numpy().item()
 
-    df = pd.DataFrame({
-        "feature": FEATURE_NAMES,
-        "weight": weights,
-        "odds_ratio": np.exp(weights),
-    })
+    df = pd.DataFrame(
+        {
+            "feature": FEATURE_NAMES,
+            "weight": weights,
+            "odds_ratio": np.exp(weights),
+        }
+    )
 
-    wandb.log({
-        "coefficients": wandb.Table(dataframe=df)
-    })
+    wandb.log({"coefficients": wandb.Table(dataframe=df)})
 
     # Plot coefficients
     plt.figure(figsize=(8, 4))
@@ -57,9 +58,7 @@ def evaluate(model_path: str = "models/modelweights.pth"):
     plt.xlabel("Weight")
     plt.tight_layout()
 
-    wandb.log({
-        "coefficients_plot": wandb.Image(plt)
-    })
+    wandb.log({"coefficients_plot": wandb.Image(plt)})
 
     plt.close()
 
@@ -70,6 +69,7 @@ def evaluate(model_path: str = "models/modelweights.pth"):
     print(df)
 
     run.finish()
+
 
 if __name__ == "__main__":
     typer.run(evaluate)

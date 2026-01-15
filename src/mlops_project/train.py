@@ -10,6 +10,7 @@ load_dotenv()
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def train(
     lr: float = 0.01,
     epochs: int = 500,
@@ -17,17 +18,17 @@ def train(
     optimizer_name: str = "adam",
     weight_decay: float = 0.0,
 ):
-    wandb.login(key=os.getenv("WANDB_API_KEY")) # Ensure WANDB_API_KEY is set in your environment variables (.env file)
+    wandb.login(key=os.getenv("WANDB_API_KEY"))  # Ensure WANDB_API_KEY is set in your environment variables (.env file)
     run = wandb.init(
-        project="titanic", 
+        project="titanic",
         config={
             "lr": lr,
             "epochs": epochs,
             "batch_size": batch_size,
             "optimizer": optimizer_name,
             "weight_decay": weight_decay,
-            },
-        )
+        },
+    )
     config = wandb.config
 
     full_train_set, _ = titanic_dataset()
@@ -46,15 +47,15 @@ def train(
 
     if config.optimizer == "adam":
         optimizer = torch.optim.Adam(
-        model.parameters(),
-        lr=config.lr,
-        weight_decay=config.weight_decay,
+            model.parameters(),
+            lr=config.lr,
+            weight_decay=config.weight_decay,
         )
     elif config.optimizer == "sgd":
-        optimizer = torch.optim.SGD( 
-        model.parameters(),
-        lr=config.lr,
-        weight_decay=config.weight_decay,
+        optimizer = torch.optim.SGD(
+            model.parameters(),
+            lr=config.lr,
+            weight_decay=config.weight_decay,
         )
     else:
         raise ValueError(f"Unsupported optimizer: {config.optimizer}")
