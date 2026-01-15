@@ -1,0 +1,63 @@
+_wandb:
+    value:
+        cli_version: 0.24.0
+        e:
+            bvddav777rxxof7aq2chvn0kxy1pr06y:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 10
+                    memoryGb: 8
+                    name: Apple M3
+                    pcpuCores: 4
+                    ramTotalBytes: "8589934592"
+                    swapTotalBytes: "8589934592"
+                cpu_count: 8
+                cpu_count_logical: 8
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "324310700032"
+                email: s240745@dtu.dk
+                executable: /opt/anaconda3/envs/IntelligentSystems/bin/python
+                git:
+                    commit: 35814fa0ef723ae712eb1fd93b8c470b9ff745af
+                    remote: https://github.com/s246070/MLOps_project.git
+                host: mbptilhekamilla.students.clients.local
+                memory:
+                    total: "8589934592"
+                os: macOS-14.2-arm64-arm-64bit
+                program: -m mlops_project.train
+                python: CPython 3.12.5
+                root: /Users/k/Documents/GitHub/MLOps_project
+                startedAt: "2026-01-15T09:02:33.372002Z"
+                writerId: bvddav777rxxof7aq2chvn0kxy1pr06y
+        m: []
+        python_version: 3.12.5
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+                - 105
+            "2":
+                - 1
+                - 5
+                - 53
+                - 105
+            "3":
+                - 2
+                - 16
+            "4": 3.12.5
+            "5": 0.24.0
+            "12": 0.24.0
+            "13": darwin-arm64
+batch_size:
+    value: 32
+epochs:
+    value: 500
+lr:
+    value: 0.01
+optimizer:
+    value: adam
+weight_decay:
+    value: 0
