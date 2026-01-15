@@ -98,7 +98,12 @@ def logreg_classifier(request):
                 response["classes"] = MODEL.classes_.tolist()
             response["probabilities"] = proba.tolist()
 
-        return response
+        return (response, 200)
 
     except Exception as e:
-        return {"error": str(e)}, 400
+        return ({"error": str(e)}, 400)
+
+@functions_framework.http
+def health(request):
+    return "OK"
+
