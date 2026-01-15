@@ -1,6 +1,6 @@
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 ENV UV_PYTHON=python3.13
-
+ENV PYTHONPATH=/src
 WORKDIR /
 
 COPY uv.lock uv.lock
