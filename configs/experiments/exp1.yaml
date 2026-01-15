@@ -1,0 +1,9 @@
+# @package _global_
+
+defaults:
+  - override /hyperparameters: exp1
+
+seed: 123
+
+wandb:
+  project: "titanic-experiments"
