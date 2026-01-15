@@ -14,5 +14,5 @@ COPY src/ src/
 WORKDIR /
 RUN uv sync --locked --no-cache --no-install-project
 
-ENTRYPOINT ["uv", "run", "src/mlops_project/train.py"]
+CMD ["uv", "run", "src/mlops_project/train.py"]
 
