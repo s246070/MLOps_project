@@ -8,13 +8,17 @@ BUCKET_NAME = os.environ.get("MODEL_BUCKET", "mlops-project-models")
 MODEL_FILE = os.environ.get("MODEL_BLOB", "modelweights.pkl")
 
 
-def load_model():
-    client = storage.Client()
-    blob = client.bucket(BUCKET_NAME).blob(MODEL_FILE)
-    model_bytes = blob.download_as_bytes()
-    return pickle.loads(model_bytes)
+_MODEL_CACHE = None
 
-MODEL = load_model()
+def load_model():
+    """Lazy-load model on first request to avoid startup timeout."""
+    global _MODEL_CACHE
+    if _MODEL_CACHE is None:
+        client = storage.Client()
+        blob = client.bucket(BUCKET_NAME).blob(MODEL_FILE)
+        model_bytes = blob.download_as_bytes()
+        _MODEL_CACHE = pickle.loads(model_bytes)
+    return _MODEL_CACHE
 
 
 def parse_instances(request):
@@ -72,30 +76,34 @@ def parse_instances(request):
 
 @functions_framework.http
 def logreg_classifier(request):
+    """Cloud Function entry point for Titanic survival prediction."""
     try:
+        # Lazy-load model on first invocation
+        model = load_model()
+        
         instances = parse_instances(request)
-        expected_features = int(os.environ.get("FEATURE_COUNT", len(instances)))
+        expected_features = int(os.environ.get("FEATURE_COUNT", "7"))
 
         if len(instances) != expected_features:
             raise ValueError(f"Expected {expected_features} features, got {len(instances)}")
 
         X = [[float(x) for x in instances]]
 
-        pred = MODEL.predict(X)
+        pred = model.predict(X)
 
         # If the model exposes class probabilities (e.g., scikit-learn), include them
         proba = None
-        if hasattr(MODEL, "predict_proba"):
+        if hasattr(model, "predict_proba"):
             try:
-                proba = MODEL.predict_proba(X)
+                proba = model.predict_proba(X)
             except Exception:
                 proba = None
 
         response = {"prediction": pred.tolist()}
         if proba is not None:
             # Map probabilities to class labels if available
-            if hasattr(MODEL, "classes_"):
-                response["classes"] = MODEL.classes_.tolist()
+            if hasattr(model, "classes_"):
+                response["classes"] = model.classes_.tolist()
             response["probabilities"] = proba.tolist()
 
         return (response, 200)
