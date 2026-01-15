@@ -19,7 +19,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install -e ".[dev]"
+          uv pip install --system -e .
+          uv pip install --system --group dev
 
       - name: Run tests
         run: |
@@ -29,13 +30,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - uses: astral-sh/setup-uv@v3
+
       - name: Install dependencies
         run: |
-          uv pip install -e ".[dev]"
+          uv pip install --system -e .
+          uv pip install --system --group dev
+
       - name: Ruff lint
         run: |
           uv run ruff check .
@@ -44,13 +50,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - uses: astral-sh/setup-uv@v3
+
       - name: Install dependencies
         run: |
-          uv pip install -e ".[dev]"
+          uv pip install --system -e .
+          uv pip install --system --group dev
+
       - name: Ruff format check
         run: |
           uv run ruff format --check .
