@@ -1,0 +1,28 @@
+project: titanic
+
+method: bayes
+
+metric:
+  name: train_loss
+  goal: minimize
+
+program: titanic/train.py
+
+parameters:
+  lr:
+    min: 0.0001
+    max: 0.1
+
+  epochs:
+    values: [100, 300, 500, 800]
+
+  batch_size:
+    values: [16, 32, 64, 128]
+
+  optimizer:
+    values: ["adam", "sgd"]
+
+  weight_decay:
+    distribution: log_uniform_values
+    min: 1e-6
+    max: 1e-2
