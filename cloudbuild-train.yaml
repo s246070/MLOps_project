@@ -1,0 +1,23 @@
+steps:
+  # Step 1: Build the training Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/titanic-train:latest'
+      - '-f'
+      - 'dockerfiles/train.dockerfile'
+      - '.'
+
+  # Step 2: Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/titanic-train:latest'
+
+images:
+  - 'gcr.io/$PROJECT_ID/titanic-train:latest'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

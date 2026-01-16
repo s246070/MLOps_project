@@ -17,7 +17,7 @@ def train(
     optimizer_name: str = "adam",
     weight_decay: float = 0.0,
 ):
-    wandb.login(key=os.getenv("WANDB_API_KEY")) # Ensure WANDB_API_KEY is set in your environment variables (.env file)
+    wandb.login(key=os.getenv("_WANDB_KEY"))
     run = wandb.init(
         project="titanic", 
         config={
@@ -88,9 +88,22 @@ def train(
         val_accuracy = correct / total if total > 0 else 0.0
         wandb.log({"epoch": epoch, "train_loss": epoch_loss, "val_accuracy": val_accuracy})
 
-    torch.save(model.state_dict(), "models/modelweights.pth")
     run.finish()
+    #os.makedirs("models", exist_ok=True)
 
+    # Gem modellen med unik timestamp
+    import datetime
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    local_path = f"models/modelweights_{timestamp}.pth"
+    torch.save(model.state_dict(), local_path)
+
+    # Upload til GCS med samme unikke navn
+    from google.cloud import storage
+    client = storage.Client()
+    bucket = client.bucket("mlops-project-models")
+    blob_name = f"modelweights_{timestamp}.pth"
+    bucket.blob(blob_name).upload_from_filename(local_path)
+    print(f"Upload complete: {blob_name}")
 
 if __name__ == "__main__":
     train()

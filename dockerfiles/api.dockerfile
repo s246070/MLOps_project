@@ -15,6 +15,8 @@ RUN uv sync --locked --no-cache --no-install-project
 
 EXPOSE 8000
 
+#CMD ["uv", "run", "--no-sync", "uvicorn", "mlops_project.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 CMD ["uv", "run", "--no-sync", "uvicorn", "mlops_project.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
 
 
