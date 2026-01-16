@@ -29,6 +29,7 @@ dependencies = [
     "uvicorn==0.34.0",
     "numpy>=1.27",
     "wandb>=0.23.1",
+    "functions-framework>=3.10.0",
 ]
 
 [dependency-groups]
