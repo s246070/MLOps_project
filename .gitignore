@@ -169,6 +169,29 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# wandb
+wandb/
+src/wandb/
+*.wandb
+
+
+# Hydra outputs
+outputs/
+multirun/
+.hydra/
+
+# Generated data files
+data/processed/*.pkl
+data/processed/*.pt
+*.pkl
+*.pth
+
+# Model weights
+models/*.pth
+models/*.pkl
+models/**/*.pth
+models/**/*.pkl
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
