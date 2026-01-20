@@ -10,6 +10,7 @@ COPY src/ src/
 
 #COPY mlops-api-sa.json /mlops-api-sa.json
 ENV GOOGLE_APPLICATION_CREDENTIALS=/mlops-api-sa.json
+ENV UV_SKIP_WHEEL_FILENAME_CHECK=1
 
 RUN uv sync --locked --no-cache --no-install-project
 
