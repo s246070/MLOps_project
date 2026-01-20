@@ -89,7 +89,7 @@ def train(
         wandb.log({"epoch": epoch, "train_loss": epoch_loss, "val_accuracy": val_accuracy})
 
     run.finish()
-    #os.makedirs("models", exist_ok=True)
+    os.makedirs("models", exist_ok=True)
 
     # Gem modellen med unik timestamp
     import datetime
@@ -107,3 +107,6 @@ def train(
 
 if __name__ == "__main__":
     train()
+
+
+# Cloud build trigger test
