@@ -1,28 +1,24 @@
-from fastapi.testclient import TestClient
-from src.mlops_project.api import app
+import os
+import requests
 
-client = TestClient(app)
+API_URL = os.getenv("API_URL")
 
-def test_root():
-    response = client.get("/")
+def test_health_check():
+    response = requests.get(f"{API_URL}/health")
     assert response.status_code == 200
-    assert response.json() == {"message": "ML Ops API"}
+    assert response.text == "OK"
 
-def test_another_endpoint():
-    response = client.get("/another-endpoint")
+def test_valid_prediction():
+    data = {
+        "instances": [3, "male", 22.0, 1, 0, 7.25, "s"]
+    }
+    response = requests.post(f"{API_URL}/", json=data)
     assert response.status_code == 200
-    assert "result" in response.json()
+    result = response.json()
+    assert "prediction" in result
+    assert "probabilities" in result
 
-def test_read_item():
-    response = client.get("/items/42")
-    assert response.status_code == 200
-    assert response.json() == {"item_id": 42}
-
-
-def test_predict_dummy():
-    response = client.post(
-        "/predict",
-        json={"feature1": 0.5, "feature2": 0.7, "feature3": 0.4}
-    )
-    assert response.status_code == 200
-    assert "prediction" in response.json()
+def test_invalid_input():
+    response = requests.post(f"{API_URL}/", json={"instances": []})
+    assert response.status_code == 400
+    assert "error" in response.json()
