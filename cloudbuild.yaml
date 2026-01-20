@@ -4,28 +4,30 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
+      - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/titanic-inference-api:latest'
+      - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:latest'
       - '-f'
       - 'dockerfiles/api.dockerfile'
       - '.'
 
-  # Step 2: Push the image to Container Registry
+  # Step 2: Push the image to EU Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
+      - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
 
-  # Step 3: Deploy to Cloud Run
-  - name: 'gcr.io/cloud-builders/run'
+  # Step 3: Deploy to Cloud Run (europe-west1)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
     args:
+      - 'run'
       - 'deploy'
       - 'titanic-inference-api'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
+      - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
       - '--region'
-      - 'us'
+      - 'europe-west1'
       - '--platform'
       - 'managed'
       - '--memory'
@@ -41,8 +43,8 @@ steps:
       - 'MODEL_BUCKET=mlops-project-models,MODEL_BLOB=modelweights.pkl'
 
 images:
-  - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
-  - 'gcr.io/$PROJECT_ID/titanic-inference-api:latest'
+  - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
+  - 'eu.gcr.io/$PROJECT_ID/titanic-inference-api:latest'
 
 options:
   machineType: E2_HIGHCPU_8
