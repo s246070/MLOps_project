@@ -145,8 +145,8 @@ def parse_instances(request):
         except (TypeError, ValueError):
             raise ValueError(f"Feature at position {idx} must be numeric")
     return converted
-@functions_framework.http
 
+@functions_framework.http
 def logreg_classifier(request):
     """Cloud Function entry point for Titanic survival prediction."""
     try:
