@@ -59,3 +59,44 @@ The directory structure of the project looks like this:
 Created using [mlops_template](https://github.com/SkafteNicki/mlops_template),
 a [cookiecutter template](https://github.com/cookiecutter/cookiecutter) for getting
 started with Machine Learning Operations (MLOps).
+
+
+
+## Command-Line Interface (Hydra)
+
+This project uses Hydra for advanced configuration management with CLI support.
+
+### Basic Usage
+```bash
+# Train with default configuration
+cd src
+python -m mlops_project.train_pickle
+
+# Override parameters from command line
+python -m mlops_project.train_pickle hyperparameters.lr=0.001
+python -m mlops_project.train_pickle hyperparameters.epochs=1000
+python -m mlops_project.train_pickle hyperparameters.batch_size=64
+
+# Multiple overrides
+python -m mlops_project.train_pickle hyperparameters.lr=0.001 hyperparameters.epochs=1000 hyperparameters.batch_size=64
+
+# Use experiment configuration
+python -m mlops_project.train_pickle +experiment=exp1
+
+# View available configurations
+ls configs/hyperparameters/  # Available hyperparameter configs
+ls configs/experiment/        # Available experiment configs
+```
+
+### Available Configurations
+
+See `configs/` directory:
+- `config.yaml` - Main configuration
+- `hyperparameters/default.yaml` - Default training parameters
+- `hyperparameters/exp1.yaml` - Experiment 1 parameters
+- `experiment/exp1.yaml` - Complete experiment setup
+
+### Help
+```bash
+python -m mlops_project.train_pickle --help
+```
