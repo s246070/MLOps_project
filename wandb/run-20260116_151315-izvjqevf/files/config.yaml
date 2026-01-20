@@ -1,0 +1,62 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            8fcafm1hef3f487q7aejlgdvrr3dzo41:
+                codePath: src/mlops_project/train.py
+                codePathLocal: src/mlops_project/train.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "12.7"
+                disk:
+                    /:
+                        total: "1081101176832"
+                        used: "36558635008"
+                email: s246103@dtu.dk
+                executable: /home/pb/MLOps_project/.venv/bin/python
+                git:
+                    commit: f371e2b333cf4f5b6570ae3a8b6c77bb78ecfb5b
+                    remote: git@github.com:s246070/MLOps_project.git
+                gpu: NVIDIA GeForce RTX 4050 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      memoryTotal: "6439305216"
+                      name: NVIDIA GeForce RTX 4050 Laptop GPU
+                      uuid: GPU-704c9004-4864-2801-1285-cb1c0521b717
+                host: MSI
+                memory:
+                    total: "7905431552"
+                os: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+                program: /home/pb/MLOps_project/src/mlops_project/train.py
+                python: CPython 3.13.11
+                root: /home/pb/MLOps_project
+                startedAt: "2026-01-16T14:13:15.730805Z"
+                writerId: 8fcafm1hef3f487q7aejlgdvrr3dzo41
+        m: []
+        python_version: 3.13.11
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+            "2":
+                - 1
+                - 5
+                - 53
+            "3":
+                - 16
+            "4": 3.13.11
+            "5": 0.23.1
+            "12": 0.23.1
+            "13": linux-x86_64
+batch_size:
+    value: 32
+epochs:
+    value: 500
+lr:
+    value: 0.01
+optimizer:
+    value: adam
+weight_decay:
+    value: 0

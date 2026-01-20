@@ -1,0 +1,39 @@
+{
+  "os":  "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python":  "CPython 3.13.11",
+  "startedAt":  "2026-01-16T14:13:15.730805Z",
+  "program":  "/home/pb/MLOps_project/src/mlops_project/train.py",
+  "codePath":  "src/mlops_project/train.py",
+  "codePathLocal":  "src/mlops_project/train.py",
+  "git":  {
+    "remote":  "git@github.com:s246070/MLOps_project.git",
+    "commit":  "f371e2b333cf4f5b6570ae3a8b6c77bb78ecfb5b"
+  },
+  "email":  "s246103@dtu.dk",
+  "root":  "/home/pb/MLOps_project",
+  "host":  "MSI",
+  "executable":  "/home/pb/MLOps_project/.venv/bin/python",
+  "cpu_count":  6,
+  "cpu_count_logical":  12,
+  "gpu":  "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "1081101176832",
+      "used":  "36558635008"
+    }
+  },
+  "memory":  {
+    "total":  "7905431552"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "memoryTotal":  "6439305216",
+      "architecture":  "Ada",
+      "uuid":  "GPU-704c9004-4864-2801-1285-cb1c0521b717"
+    }
+  ],
+  "cudaVersion":  "12.7",
+  "writerId":  "8fcafm1hef3f487q7aejlgdvrr3dzo41"
+}
