@@ -11,8 +11,10 @@ COPY src/ src/
 #COPY mlops-api-sa.json /mlops-api-sa.json
 ENV GOOGLE_APPLICATION_CREDENTIALS=/mlops-api-sa.json
 ENV UV_SKIP_WHEEL_FILENAME_CHECK=1
-
+ENV UV_SKIP_DUPLICATE_CHECK=1
+# I stedet for at installere projektet, spring over det
 RUN uv sync --locked --no-cache --no-install-project
+
 
 EXPOSE 8000
 

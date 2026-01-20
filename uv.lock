@@ -973,6 +973,11 @@ dependencies = [
     { name = "fastapi" },
     { name = "functions-framework" },
     { name = "google-cloud-storage" },
+<<<<<<< HEAD
+=======
+    { name = "matplotlib" },
+    { name = "hydra-core" },
+>>>>>>> 5994bbe (deleted duplicate dependecy)
     { name = "numpy" },
     { name = "pandas" },
     { name = "python-dotenv" },
