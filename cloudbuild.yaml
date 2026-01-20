@@ -16,8 +16,6 @@ steps:
     args:
       - 'push'
       - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
-      - '--region'
-      - 'europe-west1'
 
   # Step 3: Deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/run'
@@ -27,7 +25,7 @@ steps:
       - '--image'
       - 'gcr.io/$PROJECT_ID/titanic-inference-api:$SHORT_SHA'
       - '--region'
-      - 'europe-west1'
+      - 'us'
       - '--platform'
       - 'managed'
       - '--memory'
