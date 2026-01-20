@@ -169,6 +169,29 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# wandb
+wandb/
+src/wandb/
+*.wandb
+
+
+# Hydra outputs
+outputs/
+multirun/
+.hydra/
+
+# Generated data files
+data/processed/*.pkl
+data/processed/*.pt
+*.pkl
+*.pth
+
+# Model weights
+models/*.pth
+models/*.pkl
+models/**/*.pth
+models/**/*.pkl
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
@@ -176,4 +199,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+<<<<<<< HEAD
+=======
+# GCP service account
+mlops-api-sa.json
+>>>>>>> 2ca92f824719625de81cd10d262cb3ed19147bae
 mlops-api-sa.json
