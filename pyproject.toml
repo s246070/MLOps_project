@@ -7,7 +7,7 @@ name = "mlops_project"
 version = "0.0.1"
 description = "Our MLOps project that seeks to impress our teacher"
 authors = [
-  { name = "Emil Bruhn, Ditte Boye, Kamilla Holm, Philippa Bagger, Bror Bruland", email = "your@email.com" },
+  { name = "Emil Bruhn, Ditte Boye, Kamilla Holm, Philippa Bagger, Bror Bruland", email = "your@email.com" }
 ]
 
 keywords = ["machine learning", "MLOps"]
@@ -29,14 +29,9 @@ dependencies = [
     "uvicorn==0.34.0",
     "wandb>=0.23.1",
     "numpy>=1.27",
-    "numpy>=1.27",
-    "wandb>=0.23.1",
-<<<<<<< HEAD
     "functions-framework>=3.10.0",
     "google-cloud-storage>=3.8.0",
-=======
-    "hydra-core>=1.3.2",
->>>>>>> 2ca92f824719625de81cd10d262cb3ed19147bae
+    "hydra-core>=1.3.2"
 ]
 
 [dependency-groups]
