@@ -199,9 +199,4 @@ models/**/*.pkl
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-<<<<<<< HEAD
-=======
-# GCP service account
-mlops-api-sa.json
->>>>>>> 2ca92f824719625de81cd10d262cb3ed19147bae
 mlops-api-sa.json
