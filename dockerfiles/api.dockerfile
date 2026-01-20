@@ -8,7 +8,7 @@ COPY pyproject.toml pyproject.toml
 COPY README.md README.md
 COPY src/ src/
 
-COPY mlops-api-sa.json /mlops-api-sa.json
+#COPY mlops-api-sa.json /mlops-api-sa.json
 ENV GOOGLE_APPLICATION_CREDENTIALS=/mlops-api-sa.json
 
 RUN uv sync --locked --no-cache --no-install-project
