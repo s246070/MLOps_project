@@ -36,7 +36,7 @@ steps:
       - '--timeout'
       - '300'
       - '--service-account'
-      - 'cloud-run-api@$PROJECT_ID.iam.gserviceaccount.com'
+      - 'titanic-mlops-484412@appspot.gserviceaccount.com'
       - '--allow-unauthenticated'
       - '--set-env-vars'
       - 'MODEL_BUCKET=mlops-project-models,MODEL_BLOB=modelweights.pkl'
