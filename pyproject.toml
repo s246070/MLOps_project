@@ -30,6 +30,7 @@ dependencies = [
     "numpy>=1.27",
     "wandb>=0.23.1",
     "functions-framework>=3.10.0",
+    "google-cloud-storage>=3.8.0",
 ]
 
 [dependency-groups]
