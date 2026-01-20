@@ -3,13 +3,12 @@ import cProfile
 import pstats
 from pathlib import Path
 import sys
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from mlops_project.data_pickle import titanic_dataset
 from mlops_project.model import LogisticRegressionModel
 import torch
 from torch.utils.data import DataLoader, random_split
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 def train_model():
     "Simple training function to profile"
@@ -62,6 +61,6 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("✓ Profiling complete!")
     print("="*80)
-    print(f"\nTo view interactive visualizatio run:")
+    print("\nTo view interactive visualizatio run:")
     print(f"  snakeviz {stats_file}")
     print("\nThis will open in your browser charts")

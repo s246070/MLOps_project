@@ -1,5 +1,4 @@
 import pytest
-import os
 from mlops_project.data import preprocess_data
 
 @pytest.fixture(scope="session")

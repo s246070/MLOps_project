@@ -6,7 +6,6 @@ Tests the API endpoints locally before deployment to Cloud Run.
 
 import requests
 import json
-from typing import Dict, Any
 
 BASE_URL = "http://localhost:8000"
 
