@@ -19,18 +19,6 @@ RUN uv sync --locked --no-cache --no-install-project
 EXPOSE 8080
 
 #CMD ["uv", "run", "--no-sync", "uvicorn", "mlops_project.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-<<<<<<< HEAD
 CMD ["functions-framework", "--target", "logreg_classifier", "--source", "src/mlops_project/api/main.py", "--debug", "--port", "8080"]
-=======
-EXPOSE 8080
-
-CMD [
-  "functions-framework",
-  "--target=logreg_classifier",
-  "--source=src/mlops_project/api/main.py",
-  "--port=8080"
-]
->>>>>>> 6f8c5e6418302d782b531b98e4fd1be12b9f2aec
-
 
 
