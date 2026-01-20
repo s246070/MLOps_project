@@ -67,7 +67,7 @@ class MyDataset(Dataset):
         csv_path = os.path.join(root, "Titanic-Dataset.csv")
         if os.path.exists(csv_path):
             try:
-                df = pd.read_csv(csv_path)
+                df = pd.+2read_csv(csv_path)
                 self.samples = df.to_dict("records")
             except Exception:
                 self.samples = []
