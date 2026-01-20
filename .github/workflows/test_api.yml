@@ -1,0 +1,29 @@
+name: Test API endpoints
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system -e .
+          uv pip install --system --group dev
+
+      - name: Run API tests
+        run: |
+          uv run -m pytest tests/integrationtests/test_apis.py

@@ -1,0 +1,48 @@
+name: Load Test with Locust (after GCP deploy)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Auth with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Extract deployed model URL
+        id: get-url
+        run: |
+          DEPLOYED_MODEL_URL=$(gcloud run services describe CLOUD RUN-SERVICE NAVN HER \
+            --region=europe-west1 \
+            --format='value(status.url)')
+          echo "DEPLOYED_MODEL_URL=$DEPLOYED_MODEL_URL" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system -e .
+          uv pip install --system --group dev
+
+      - name: Run Locust load test
+        env:
+          DEPLOYED_MODEL_URL: ${{ env.DEPLOYED_MODEL_URL }}
+        run: |
+          uv run locust -f tests/performancetests/locustfile.py \
+            --headless -u 10 -r 1 --run-time 1m \
+            --host=$DEPLOYED_MODEL_URL \
+            --csv=./locust/results
+
+      - name: Upload Locust results
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-results
+          path: ./locust
