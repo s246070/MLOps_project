@@ -17,6 +17,6 @@ cmd = [
     "--debug",
     "--port", "8080",
 ]
-
+print(main_py)
 subprocess.run(cmd, check=True)
 

@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 ENV UV_PYTHON=python3.13
-ENV PYTHONPATH=/src
-WORKDIR /
+ENV PYTHONPATH=/app
+WORKDIR /app
 
 COPY uv.lock uv.lock
 COPY pyproject.toml pyproject.toml
@@ -19,13 +19,7 @@ RUN uv sync --locked --no-cache --no-install-project
 EXPOSE 8080
 
 #CMD ["uv", "run", "--no-sync", "uvicorn", "mlops_project.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD = [
-    "functions-framework",
-    "--target", "logreg_classifier",
-    "--source", "src/mlops_project/api/main.py",
-    "--debug",
-    "--port", "8080",
-]
+CMD ["functions-framework", "--target", "logreg_classifier", "--source", "src/mlops_project/api/main.py", "--debug", "--port", "8080"]
 
 
 
