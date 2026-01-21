@@ -22,7 +22,7 @@ jobs:
       - name: Extract deployed model URL
         id: get-url
         run: |
-          DEPLOYED_MODEL_URL=$(gcloud run services describe CLOUD RUN-SERVICE NAVN HER \
+          DEPLOYED_MODEL_URL=$(gcloud run services describe titanic-inference-api \
             --region=europe-west1 \
             --format='value(status.url)')
           echo "DEPLOYED_MODEL_URL=$DEPLOYED_MODEL_URL" >> $GITHUB_ENV
