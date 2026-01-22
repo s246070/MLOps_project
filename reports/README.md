@@ -346,9 +346,9 @@ On the VM, we cloned our repository, pulled necessary data from our GCS bucket, 
 
 Below are screenshots of our Google Cloud Storage (GCS) bucket showing the data stored for our project:
 
-![GCP Bucket Overview Screenshot](reports/figures/Q19_1.png)
+![GCP Bucket Overview Screenshot](figures/Q19_1.png)
 
-![GCP Bucket Content Screenshot](reports/figures/Q19_2.png)
+![GCP Bucket Content Screenshot](figures/Q19_2.png)
 
 We primarily use the bucket named ```bash mlops-project-models``` to store trained model artifacts and other relevant files. This ensures that our deployment pipeline can retrieve the latest model version when serving predictions through our API.
 
@@ -363,9 +363,9 @@ We have created an Artifact Registry in Google Cloud Platform (GCP) to store our
 
 In the registry, we have stored Docker images for our ```bash titanic-inference-api```, which is used to serve predictions based on our trained Titanic model.
 
-![GCP Artifact Registry Screenshot 1](reports/figures/Q20_1.png)
+![GCP Artifact Registry Screenshot 1](figures/Q20_1.png)
 
-![GCP Artifact Registry Screenshot 2](reports/figures/Q20_2.png)
+![GCP Artifact Registry Screenshot 2](figures/Q20_2.png)
 
 ### Question 21
 
@@ -378,9 +378,9 @@ We use Google Cloud Build to automatically build Docker images from our source c
 
 This ensures a reproducible and auditable pipeline. Our build history shows multiple successful builds, indicating a functioning CI/CD pipeline that integrates source code changes with image deployment.
 
-![GCP Cloud Build History Screenshot](reports/figures/Q21_1.png)
+![GCP Cloud Build History Screenshot](figures/Q21_1.png)
 
-![GCP Cloud Build Single Build History Screenshot](reports/figures/Q21_2.png)
+![GCP Cloud Build Single Build History Screenshot](figures/Q21_2.png)
 
 ### Question 22
 
@@ -540,7 +540,7 @@ The user can now access the deployed API through Cloud Run, which handles predic
 
 This end-to-end system enables version-controlled, reproducible, and continuously tested ML pipelines — allowing us to easily monitor model performance and retrain when necessary.
 
-![Mlops pipeline](reports/figures/Q29.png)
+![Mlops pipeline](figures/Q29.png)
 
 The figure was manually created in Figma. Relevant logos were sourced from public Google Image searches.
 
