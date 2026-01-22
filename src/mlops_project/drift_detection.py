@@ -62,6 +62,7 @@ def run_drift_check(
 
     report = Report(metrics=[DataDriftPreset()])
     report.run(reference_data=reference, current_data=current)
+    report.save_html("drift_report.html")
 
     report_dict = report.as_dict()
     dataset_drift = report_dict["metrics"][0]["result"].get("dataset_drift", None)
