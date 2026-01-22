@@ -7,6 +7,11 @@ import functions_framework
 from google.cloud import storage
 from mlops_project.model import LogisticRegressionModel
 from collections import OrderedDict
+from mlops_project.drift_logging import append_jsonl_to_gcs, make_log_record
+
+# this is for drift logging
+LOG_BUCKET = os.environ.get("DRIFT_BUCKET", os.environ.get("MODEL_BUCKET", "mlops-project-models"))
+LOG_BLOB = os.environ.get("DRIFT_LOG_BLOB", "drift/predictions_log.jsonl")
 
 BUCKET_NAME = os.environ.get("MODEL_BUCKET", "mlops-project-models")
 MODEL_FILE = os.environ.get("MODEL_BLOB", "modelweights.pkl")
@@ -172,7 +177,11 @@ def logreg_classifier(request):
                 proba_positive = torch.sigmoid(logits).reshape(-1)[0].item()  # float in [0,1]
                 pred = [1 if proba_positive >= 0.5 else 0]
                 proba = [[1.0 - proba_positive, proba_positive]]
-                
+            
+            # added for drift-detection
+            record = make_log_record(instances, int(pred[0]), proba_positive if isinstance(model, nn.Module) else None)
+            append_jsonl_to_gcs(LOG_BUCKET, LOG_BLOB, record)
+
             response = {
                 "prediction": pred,
                 "classes": [0, 1],
@@ -198,7 +207,25 @@ def logreg_classifier(request):
         return (response, 200)
     except Exception as e:
         return ({"error": str(e)}, 400)
+    
+    
+
+# added for drift-detection
+
+from mlops_project.drift_detection import run_drift_check
 
 @functions_framework.http
-def health(request):
-    return "OK"
+def drift_check(request):
+    try:
+        n_latest = request.args.get("n_latest") if request.args else None
+        n_latest = int(n_latest) if n_latest else 500
+
+        result = run_drift_check(
+            bucket_name=os.environ.get("DRIFT_BUCKET", BUCKET_NAME),
+            reference_blob="drift/titanic_features_reference.csv",
+            log_blob=os.environ.get("DRIFT_LOG_BLOB", "drift/predictions_log.jsonl"),
+            n_latest=n_latest,
+        )
+        return (result, 200 if result.get("ok") else 400)
+    except Exception as e:
+        return ({"ok": False, "error": str(e)}, 400)

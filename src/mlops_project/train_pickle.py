@@ -125,9 +125,10 @@ def train(cfg: DictConfig) -> None:
     model_dir = Path(cfg.paths.model_dir)
     model_dir.mkdir(parents=True, exist_ok=True)
     
-    model_path = model_dir / "modelweights.pth"
-    torch.save(model.state_dict(), model_path)
-    print(f"Model saved to {model_path}")
+    # FJERNET FOR AT TESTE DRIFT DETECTION
+    #model_path = model_dir / "modelweights.pth"
+    #torch.save(model.state_dict(), model_path)
+    #print(f"Model saved to {model_path}")
     
     # Save as pickle for cloud compatibility
     import pickle
