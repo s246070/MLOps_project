@@ -208,6 +208,11 @@ def logreg_classifier(request):
                 proba_positive = torch.sigmoid(logits).reshape(-1)[0].item()
                 pred = [1 if proba_positive >= 0.5 else 0]
                 proba = [[1.0 - proba_positive, proba_positive]]
+<<<<<<< HEAD
+            
+            # added for drift-detection (logging change in behavior)
+            record = make_log_record(instances, int(pred[0]), proba_positive if isinstance(model, nn.Module) else None)
+=======
 
             # Drift logging
             record = make_log_record(
@@ -215,6 +220,7 @@ def logreg_classifier(request):
                 int(pred[0]),
                 proba_positive
             )
+>>>>>>> f1b3df54b4856f5ae0cf4a394926b95f5d8a83ad
             append_jsonl_to_gcs(LOG_BUCKET, LOG_BLOB, record)
 
             response = {
@@ -310,10 +316,13 @@ def logreg_classifier(request):
     # except Exception as e:
     #     return ({"error": str(e)}, 400)
     
-    
 
-# added for drift-detection
 
+"""
+The section below is an HTTP endpoint we can call to run data drift
+detection. This endpoint reads how many recent predictions to ude, runs
+the drift check and returns the result as an JSON response. 
+"""
 
 @functions_framework.http
 def drift_check(request):
