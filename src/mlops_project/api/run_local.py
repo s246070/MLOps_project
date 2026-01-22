@@ -15,7 +15,7 @@ cmd = [
     "--target", "logreg_classifier",
     "--source", str(main_py),
     "--debug",
-    "--port", "8080",
+    "--port", "8088",
 ]
 print(main_py)
 subprocess.run(cmd, check=True)
