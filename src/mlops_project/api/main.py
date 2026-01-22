@@ -178,7 +178,7 @@ def logreg_classifier(request):
                 pred = [1 if proba_positive >= 0.5 else 0]
                 proba = [[1.0 - proba_positive, proba_positive]]
             
-            # added for drift-detection
+            # added for drift-detection (logging change in behavior)
             record = make_log_record(instances, int(pred[0]), proba_positive if isinstance(model, nn.Module) else None)
             append_jsonl_to_gcs(LOG_BUCKET, LOG_BLOB, record)
 
@@ -208,11 +208,14 @@ def logreg_classifier(request):
     except Exception as e:
         return ({"error": str(e)}, 400)
     
-    
-
-# added for drift-detection
 
 from mlops_project.drift_detection import run_drift_check
+
+"""
+The section below is an HTTP endpoint we can call to run data drift
+detection. This endpoint reads how many recent predictions to ude, runs
+the drift check and returns the result as an JSON response. 
+"""
 
 @functions_framework.http
 def drift_check(request):
