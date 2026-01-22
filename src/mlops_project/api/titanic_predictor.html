@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .survived {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .not-survived {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .error {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚢 Titanic Survival Predictor</h1>
+        
+        <form id="predictionForm">
+            <div class="form-group">
+                <label>Passenger Class:</label>
+                <select id="pclass" required>
+                    <option value="">Select...</option>
+                    <option value="1">1st Class</option>
+                    <option value="2">2nd Class</option>
+                    <option value="3">3rd Class</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Sex:</label>
+                <select id="sex" required>
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="number" id="age" step="0.1" min="0" max="100" required>
+            </div>
+
+            <div class="form-group">
+                <label>Siblings/Spouses Aboard:</label>
+                <input type="number" id="sibsp" min="0" value="0" required>
+            </div>
+
+            <div class="form-group">
+                <label>Parents/Children Aboard:</label>
+                <input type="number" id="parch" min="0" value="0" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ticket Fare (£):</label>
+                <input type="number" id="fare" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label>Port of Embarkation:</label>
+                <select id="embarked" required>
+                    <option value="">Select...</option>
+                    <option value="C">Cherbourg</option>
+                    <option value="Q">Queenstown</option>
+                    <option value="S">Southampton</option>
+                </select>
+            </div>
+
+            <button type="submit">Predict Survival</button>
+        </form>
+
+        <div id="result" class="result"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        // CHANGE THIS to match your API URL
+        const API_URL = 'http://localhost:8080';
+
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide previous results
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            
+            // Get form data
+            const data = {
+                pclass: parseInt(document.getElementById('pclass').value),
+                sex: document.getElementById('sex').value,
+                age: parseFloat(document.getElementById('age').value),
+                sibsp: parseInt(document.getElementById('sibsp').value),
+                parch: parseInt(document.getElementById('parch').value),
+                fare: parseFloat(document.getElementById('fare').value),
+                embarked: document.getElementById('embarked').value
+            };
+            
+            try {
+                // Call API
+                const response = await fetch(`${API_URL}/predict/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Display result
+                const resultDiv = document.getElementById('result');
+                const survived = result.survived === 1;
+                const probability = (result.probability * 100).toFixed(1);
+                
+                resultDiv.className = 'result ' + (survived ? 'survived' : 'not-survived');
+                resultDiv.innerHTML = `
+                    <h2>${survived ? '✅ SURVIVED' : '❌ DID NOT SURVIVE'}</h2>
+                    <p>Survival Probability: <strong>${probability}%</strong></p>
+                `;
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                // Show error
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = `Error: ${error.message}. Make sure the API is running at ${API_URL}`;
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
