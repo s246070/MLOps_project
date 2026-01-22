@@ -1,4 +1,4 @@
-#%%
+
 import os
 import pickle
 import torch
@@ -10,6 +10,7 @@ from collections import OrderedDict
 from mlops_project.drift_logging import append_jsonl_to_gcs, make_log_record
 from prometheus_client import Counter, Histogram, Summary, generate_latest, CONTENT_TYPE_LATEST
 import time
+from mlops_project.drift_detection import run_drift_check
 
 
 # this is for drift logging
@@ -313,7 +314,6 @@ def logreg_classifier(request):
 
 # added for drift-detection
 
-from mlops_project.drift_detection import run_drift_check
 
 @functions_framework.http
 def drift_check(request):
