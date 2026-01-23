@@ -255,9 +255,15 @@ Finally, each trained model was saved locally with a timestamp and uploaded to a
 >
 > Answer:
 
---- question 14 fill here ---
+![W&B Logging](figures/Q14_1.png)
 
-[OBS jeg er igang med at ændre train.py til også at tracke val_loss og train_acc. Bagefter kører jeg det hele igen med et sweep :)]
+As seen in the first image, we are tracking key metrics such as ```bash train_loss```, ```bash val_loss```, ```bash train_accuracy```, and ```bash val_accuracy```. These metrics help us evaluate both how well the model fits the training data and how well it generalizes to unseen validation data. For example, while ```bash train_loss``` indicates how well the model is optimizing on the training set, ```bash val_loss``` is crucial to detect overfitting.
+
+We also monitor ```bash train_accuracy``` and ```bash val_accuracy``` to get a more interpretable measure of performance, especially since we're working with binary classification. Accuracy complements the loss metrics by providing a direct measure of prediction correctness.
+
+![W&B Sweep](figures/Q14_2.png)
+
+The second image shows a sweep of 10 runs with varying hyperparameters such as learning rate, optimizer type, batch size, weight decay, and number of epochs. The parameter importance plot gives insight into which hyperparameters most strongly influence model performance, in this case, ```bash optimizer``` choice and ```bash learning rate``` had the highest impact on validation loss.
 
 ### Question 15
 
