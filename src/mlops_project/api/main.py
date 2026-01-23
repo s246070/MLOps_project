@@ -195,18 +195,31 @@ def parse_instances(request):
 
 @functions_framework.http
 def logreg_classifier(request):
+    if request.method == 'OPTIONS':   # Handle CORS preflight
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
+        }
+        return ('', 204, headers)
+    
+    # Add CORS headers to all responses
+    headers = {
+        'Access-Control-Allow-Origin': '*'
+    }
     #Cloud Function entry point for Titanic survival prediction
 
     # metrics endpoint
     if getattr(request, "path", "").endswith("/metrics"):
         body = generate_latest()
-        headers = {"Content-Type": CONTENT_TYPE_LATEST}
+        headers.update({"Content-Type": CONTENT_TYPE_LATEST})
         return (body, 200, headers)
 
     # Health check endpoint
     path = getattr(request, "path", "")
     if request.method == "GET" and path.endswith("/health"):
-        return ("OK", 200)
+        return ("OK", 200, headers)
 
     # count requests 
     REQUEST_COUNTER.inc()
@@ -279,12 +292,12 @@ def logreg_classifier(request):
         LATENCY_HIST.observe(elapsed)
 
         # Return final response
-        return (response, 200)
+        return (response, 200, headers)
 
     except Exception as e:
         # Metrics: errors
         ERROR_COUNTER.inc()
-        return ({"error": str(e)}, 400)
+        return ({"error": str(e)}, 400, headers)
 
 """
 The section below is an HTTP endpoint we can call to run data drift
