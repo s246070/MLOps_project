@@ -1,16 +1,36 @@
 
 import os
+import sys
 import pickle
 import torch
 import torch.nn as nn
 import functions_framework
 from google.cloud import storage
-from mlops_project.model import LogisticRegressionModel
 from collections import OrderedDict
-from mlops_project.drift_logging import append_jsonl_to_gcs, make_log_record
-from prometheus_client import Counter, Histogram, Summary, generate_latest, CONTENT_TYPE_LATEST
 import time
-from mlops_project.drift_detection import run_drift_check
+
+# Try to import prometheus, fallback if not available
+try:
+    from prometheus_client import Counter, Histogram, Summary, generate_latest, CONTENT_TYPE_LATEST
+    HAS_PROMETHEUS = True
+except ImportError:
+    HAS_PROMETHEUS = False
+    # Minimal stubs to prevent crashes
+    class Counter:
+        def __init__(self, *args, **kwargs): pass
+        def inc(self, *args, **kwargs): pass
+        def labels(self, *args, **kwargs): return self
+    class Histogram:
+        def __init__(self, *args, **kwargs): pass
+        def observe(self, *args, **kwargs): pass
+        def labels(self, *args, **kwargs): return self
+    class Summary:
+        def __init__(self, *args, **kwargs): pass
+        def observe(self, *args, **kwargs): pass
+        def labels(self, *args, **kwargs): return self
+    def generate_latest():
+        return b"# HELP prometheus_unavailable Prometheus client not available\n"
+    CONTENT_TYPE_LATEST = "text/plain; version=0.0.4; charset=utf-8"
 
 
 # this is for drift logging
@@ -20,6 +40,31 @@ LOG_BLOB = os.environ.get("DRIFT_LOG_BLOB", "drift/predictions_log.jsonl")
 BUCKET_NAME = os.environ.get("MODEL_BUCKET", "mlops-project-models")
 MODEL_FILE = os.environ.get("MODEL_BLOB", "modelweights.pkl")
 _MODEL_CACHE = None
+
+# Lazy-load mlops_project modules to avoid import errors in Cloud Run
+_MLOPS_MODULES_LOADED = False
+_LogisticRegressionModel = None
+_append_jsonl_to_gcs = None
+_make_log_record = None
+_run_drift_check = None
+
+def _ensure_mlops_modules():
+    """Lazy-load mlops_project dependencies on first use."""
+    global _MLOPS_MODULES_LOADED, _LogisticRegressionModel, _append_jsonl_to_gcs, _make_log_record, _run_drift_check
+    if _MLOPS_MODULES_LOADED:
+        return
+    try:
+        from mlops_project.model import LogisticRegressionModel
+        from mlops_project.drift_logging import append_jsonl_to_gcs, make_log_record
+        from mlops_project.drift_detection import run_drift_check
+        _LogisticRegressionModel = LogisticRegressionModel
+        _append_jsonl_to_gcs = append_jsonl_to_gcs
+        _make_log_record = make_log_record
+        _run_drift_check = run_drift_check
+        _MLOPS_MODULES_LOADED = True
+    except ImportError as e:
+        _MLOPS_MODULES_LOADED = True
+        raise RuntimeError(f"Could not import mlops_project modules: {e}")
 
 
 ERROR_COUNTER = Counter("prediction_errors_total", "Number of prediction errors")
@@ -107,7 +152,8 @@ def load_model():
             try:
                 sd = _strip_module_prefix(obj)
                 input_dim = _infer_input_dim(sd)
-                model = LogisticRegressionModel(input_dim)
+                _ensure_mlops_modules()
+                model = _LogisticRegressionModel(input_dim)
                 model.load_state_dict(sd, strict=False)
                 model.eval()
                 _MODEL_CACHE = model
@@ -210,12 +256,13 @@ def logreg_classifier(request):
                 proba = [[1.0 - proba_positive, proba_positive]]
 
             # Drift logging
-            record = make_log_record(
+            _ensure_mlops_modules()
+            record = _make_log_record(
                 instances,
                 int(pred[0]),
                 proba_positive
             )
-            append_jsonl_to_gcs(LOG_BUCKET, LOG_BLOB, record)
+            _append_jsonl_to_gcs(LOG_BUCKET, LOG_BLOB, record)
 
             response = {
                 "prediction": pred,
@@ -321,10 +368,11 @@ the drift check and returns the result as an JSON response.
 @functions_framework.http
 def drift_check(request):
     try:
+        _ensure_mlops_modules()
         n_latest = request.args.get("n_latest") if request.args else None
         n_latest = int(n_latest) if n_latest else 500
 
-        result = run_drift_check(
+        result = _run_drift_check(
             bucket_name=os.environ.get("DRIFT_BUCKET", BUCKET_NAME),
             reference_blob="drift/titanic_features_reference.csv",
             log_blob=os.environ.get("DRIFT_LOG_BLOB", "drift/predictions_log.jsonl"),
