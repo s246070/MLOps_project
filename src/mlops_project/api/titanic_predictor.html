@@ -138,64 +138,62 @@
         <div id="result" class="result"></div>
         <div id="error" class="error"></div>
     </div>
-
-    <script>
-        // CHANGE THIS to match your API URL
-        const API_URL = 'http://localhost:8080';
-
-        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+ <script>
+    const API_URL = 'https://europe-west1-titanic-mlops-484412.cloudfunctions.net/titanic-function';
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // hiding previous results
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('error').style.display = 'none';
+        
+        //Get form data as flat array: [Pclass, Sex, Age, SibSp, Parch, Fare, Embarked]
+        const data = [
+            parseInt(document.getElementById('pclass').value),
+            document.getElementById('sex').value,
+            parseFloat(document.getElementById('age').value),
+            parseInt(document.getElementById('sibsp').value),
+            parseInt(document.getElementById('parch').value),
+            parseFloat(document.getElementById('fare').value),
+            document.getElementById('embarked').value
+        ];
+        
+        try {
+            // Call API
+            const response = await fetch(`${API_URL}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
             
-            // Hide previous results
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
-            
-            // Get form data
-            const data = {
-                pclass: parseInt(document.getElementById('pclass').value),
-                sex: document.getElementById('sex').value,
-                age: parseFloat(document.getElementById('age').value),
-                sibsp: parseInt(document.getElementById('sibsp').value),
-                parch: parseInt(document.getElementById('parch').value),
-                fare: parseFloat(document.getElementById('fare').value),
-                embarked: document.getElementById('embarked').value
-            };
-            
-            try {
-                // Call API
-                const response = await fetch(`${API_URL}/predict/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                // Display result
-                const resultDiv = document.getElementById('result');
-                const survived = result.survived === 1;
-                const probability = (result.probability * 100).toFixed(1);
-                
-                resultDiv.className = 'result ' + (survived ? 'survived' : 'not-survived');
-                resultDiv.innerHTML = `
-                    <h2>${survived ? '✅ SURVIVED' : '❌ DID NOT SURVIVE'}</h2>
-                    <p>Survival Probability: <strong>${probability}%</strong></p>
-                `;
-                resultDiv.style.display = 'block';
-                
-            } catch (error) {
-                // Show error
-                const errorDiv = document.getElementById('error');
-                errorDiv.textContent = `Error: ${error.message}. Make sure the API is running at ${API_URL}`;
-                errorDiv.style.display = 'block';
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-    </script>
+            
+            const result = await response.json();
+            
+            // Display result
+            const resultDiv = document.getElementById('result');
+            const survived = result.prediction[0] === 1;
+            const probability = (result.probabilities[0][1] * 100).toFixed(1);
+            
+            resultDiv.className = 'result ' + (survived ? 'survived' : 'not-survived');
+            resultDiv.innerHTML = `
+                <h2>${survived ? '✅ SURVIVED' : '❌ DID NOT SURVIVE'}</h2>
+                <p>Survival Probability: <strong>${probability}%</strong></p>
+            `;
+            resultDiv.style.display = 'block';
+            
+        } catch (error) {
+            // Show error
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = `Error: ${error.message}. Make sure the API is running at ${API_URL}`;
+            errorDiv.style.display = 'block';
+        }
+    });
+</script>
+    
 </body>
 </html>
