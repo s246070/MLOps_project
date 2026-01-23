@@ -25,7 +25,7 @@ def train(cfg: DictConfig) -> None:
     torch.manual_seed(cfg.seed)
 
     # Initialize wandb
-    wandb.login(key=os.getenv(cfg.wandb.api_key_env))
+    wandb.login(key=os.getenv("WANDB_API_KEY"))
     run = wandb.init(
         project=cfg.wandb.project,
         entity=cfg.wandb.entity,
