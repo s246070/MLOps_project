@@ -524,8 +524,8 @@ Working in the cloud was mostly a positive experience. It allowed us to easily c
 >
 > Answer:
 
-We implemented a simple html frontend, to demonstrate the deployed model. The interface consists of an HTML form for collecting passenger features, a JavaScript fetch API for HTTP POST requests to the Cloud Function endpoint and a dynamic result rendering showing the survival prediction and confidence scores. Lastly we added some error handling for API connectivity issues.
-
+We implemented a simple HTML frontend for the api to demonstrate the deployed model. The interface consists of an HTML form for collecting passenger features, a JavaScript fetch API for HTTP POST requests to the Cloud Function endpoint and a dynamic result rendering showing the survival prediction and confidence scores. Lastly we added some error handling for API connectivity issues. Frontend shown here: 
+![API frontend screenshot](figures/Q28.png)
 ### Question 29
 
 > **Include a figure that describes the overall architecture of your system and what services that you make use of.**
