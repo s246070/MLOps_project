@@ -8,6 +8,7 @@ import wandb
 from mlops_project.data import titanic_dataset
 from mlops_project.model import LogisticRegressionModel
 
+# use gpu if possible
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 FEATURE_NAMES = [

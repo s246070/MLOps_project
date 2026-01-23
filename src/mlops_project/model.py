@@ -1,4 +1,7 @@
 import torch.nn as nn
+import torch.nn.functional as F
+
+# logistic regression model
 
 class LogisticRegressionModel(nn.Module):
     def __init__(self, input_dim):

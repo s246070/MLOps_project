@@ -6,7 +6,7 @@ from matplotlib.figure import Figure
 
 
 class ModelVisualizer:
-    """Visualization utilities for ML models."""
+    # Visualization utilities for ML models
     
     def __init__(self, figsize: Tuple[int, int] = (12, 6)):
         self.figsize = figsize
@@ -19,7 +19,7 @@ class ModelVisualizer:
         save_path: Optional[str] = None,
         show: bool = True,
     ) -> Figure:
-        """Plot training and validation metrics over epochs."""
+        # Plot training and validation metrics over epochs
         fig, ax = plt.subplots(figsize=self.figsize)
         
         for metric in metrics:
@@ -47,7 +47,7 @@ class ModelVisualizer:
         save_path: Optional[str] = None,
         show: bool = True,
     ) -> Figure:
-        """Plot confusion matrix as heatmap."""
+        # Plot confusion matrix as heatmap
         fig, ax = plt.subplots(figsize=(8, 6))
         
         sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax,
@@ -74,7 +74,7 @@ class ModelVisualizer:
         save_path: Optional[str] = None,
         show: bool = True,
     ) -> Figure:
-        """Plot ROC curve."""
+        # Plot ROC curve
         fig, ax = plt.subplots(figsize=self.figsize)
         
         ax.plot(fpr, tpr, color='darkorange', lw=2,
@@ -104,7 +104,7 @@ class ModelVisualizer:
         save_path: Optional[str] = None,
         show: bool = True,
     ) -> Figure:
-        """Plot feature importance."""
+        # Plot feature importance
         indices = np.argsort(importances)[-top_n:]
         
         fig, ax = plt.subplots(figsize=self.figsize)
