@@ -10,7 +10,7 @@ def preprocess_data(
     raw_path: str = "data/raw/Titanic-Dataset.csv",
     processed_dir: str = "data/processed",
 ) -> None:
-    """Preprocess Titanic CSV and save as torch tensors."""
+    #Preprocess Titanic CSV and save as torch tensors
 
     os.makedirs(processed_dir, exist_ok=True)
 
@@ -41,7 +41,7 @@ def preprocess_data(
     torch.save(X_test, f"{processed_dir}/test_features.pt")
     torch.save(y_test, f"{processed_dir}/test_targets.pt")
 
-
+# load features and targets
 def titanic_dataset():
     X_train = torch.load("data/processed/train_features.pt")
     y_train = torch.load("data/processed/train_targets.pt")
@@ -53,14 +53,8 @@ def titanic_dataset():
         torch.utils.data.TensorDataset(X_test, y_test),
     )
 
-
+# dataset class
 class MyDataset(Dataset):
-    """Minimal dataset placeholder to satisfy tests and simple use.
-
-    It optionally loads records from a Titanic CSV if present in the
-    provided root directory; otherwise it behaves as an empty dataset.
-    """
-
     def __init__(self, root: str):
         self.root = root
         self.samples = []

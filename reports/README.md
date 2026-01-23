@@ -30,7 +30,7 @@ s246103, s246215, s246070, s245414, s240745
 >
 > Answer:
 
-We did not use any open-source packages outside the course-provided tools and libraries. All dependencies we relied on, including FastAPI, scikit-learn, Hydra, Google Cloud SDK packages, Weights & Biases, and profiling or visualization tools like TensorBoard, SnakeViz, and memory-profiler, were part of the curriculum.
+We did not use any open-source packages outside the course-provided tools and libraries. All dependencies we relied on, including Function-Framework, scikit-learn, Hydra, Google Cloud SDK packages, Weights & Biases, and profiling or visualization tools like TensorBoard, SnakeViz, and memory-profiler, were part of the curriculum.
 All dependencies are documented in our ```bash pyproject.toml ```.
 
 ## Coding environment
@@ -53,8 +53,11 @@ All dependencies are documented in our ```bash pyproject.toml ```.
 
 We used ```bash uv``` to manage all Python dependencies in our project. Instead of using ```bash requirements.txt```, we defined our dependencies in a ```bash pyproject.toml``` file, grouped by core, dev, and optional packages. The exact versions were locked using a ```bash uv.lock``` file, ensuring full reproducibility across environments.
 To set up a complete and isolated development environment, a new team member would only need to:
+
 ```bash uv venv``` - creates a virtual environment
+
 ```bash uv sync``` - installs all locked dependencies
+
 This setup is fast, deterministic, and avoids dependency conflicts. It ensures everyone on the team runs with exactly the same versions of all tools and libraries, including testing and documentation tools.
 
 ### Question 5
@@ -252,7 +255,15 @@ Finally, each trained model was saved locally with a timestamp and uploaded to a
 >
 > Answer:
 
---- question 14 fill here ---
+![W&B Logging](figures/Q14_1.png)
+
+As seen in the first image, we are tracking key metrics such as ```bash train_loss```, ```bash val_loss```, ```bash train_accuracy```, and ```bash val_accuracy```. These metrics help us evaluate both how well the model fits the training data and how well it generalizes to unseen validation data. For example, while ```bash train_loss``` indicates how well the model is optimizing on the training set, ```bash val_loss``` is crucial to detect overfitting.
+
+We also monitor ```bash train_accuracy``` and ```bash val_accuracy``` to get a more interpretable measure of performance, especially since we're working with binary classification. Accuracy complements the loss metrics by providing a direct measure of prediction correctness.
+
+![W&B Sweep](figures/Q14_2.png)
+
+The second image shows a sweep of 10 runs with varying hyperparameters such as learning rate, optimizer type, batch size, weight decay, and number of epochs. The parameter importance plot gives insight into which hyperparameters most strongly influence model performance, in this case, ```bash optimizer``` choice and ```bash learning rate``` had the highest impact on validation loss.
 
 ### Question 15
 
@@ -286,7 +297,9 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 16 fill here ---
+Debugging methods varied across the group. Some members preferred traditional methods such as inserting ```bash print()``` statements or using breakpoints in their IDE, while others experimented with the built-in Python debugger by adding ```bash import pdb; pdb.set_trace()``` at specific points in the code. Although we briefly explored the use of the debugger as introduced in the exercises, not everyone actively used it in daily development.
+
+In terms of profiling, we created a dedicated script called ```bash profile_training.py```, located in the ```bash profiling``` folder. This allowed us to run the training code with ```bash cProfile``` to identify any performance bottlenecks. While our model was relatively lightweight and the dataset small, the profiling helped confirm that there were no major inefficiencies in our data loading or training loop. Despite not running frequent profiling during development, this one-time check gave us confidence that our pipeline was reasonably optimized.
 
 ## Working in the cloud
 
@@ -303,7 +316,13 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 17 fill here ---
+We used several services from Google Cloud Platform (GCP) to support our project infrastructure and deployment. First, we used Google Cloud Storage (GCS) to store trained models and enable cloud-based access for inference. Specifically, we saved our logistic regression models as ```bash .pkl``` files using Python’s ```bash pickle``` module, which allowed us to easily upload them to a GCS bucket and later load them into our deployed API.
+
+Second, we set up a Service Account with appropriate permissions and authentication, which is used inside our Docker containers to enable secure access to GCP resources, such as the storage bucket, during training and inference.
+
+Third, we deployed our inference logic using both Cloud Run and Cloud Functions. Cloud Run is used for container-based deployment, offering scalability and quick rollout of new Docker images. Cloud Functions handles the HTTP-based execution of our model inference (```bash logreg_classifier```) as a lightweight endpoint.
+
+We implemented Cloud Monitoring and set up alerting rules to ensure operational stability. This allows us to be notified if the application experiences failures or performance degradation. Finally, we deployed a separate drift detection API to monitor changes in the distribution of incoming prediction data, which helps us detect when the model may need retraining.
 
 ### Question 18
 
@@ -318,7 +337,11 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 18 fill here ---
+We used Google Compute Engine to provide a VM in order to run experiments in a controlled and scalable environment. Following the exercises, we created an e2-medium instance (2 vCPUs and 4 GB RAM) located in the ```bash europe-west1-b``` zone. This provided a cost-effective option that was sufficient for running our model training and evaluations.
+
+We accessed the VM both through the web interface and via the terminal using ```bash gcloud compute ssh```. To simplify setup, we started the instance using a pre-configured PyTorch image from the ```bash deeplearning-platform-release project```. This meant that essential software such as Python, PyTorch, and CUDA drivers were already installed.
+
+On the VM, we cloned our repository, pulled necessary data from our GCS bucket, and ran model training via ```bash uv run```. Running on Compute Engine ensured that we had a reproducible cloud environment, consistent with our local development setup, and it allowed us to better evaluate model performance in a production-like context.
 
 ### Question 19
 
@@ -327,7 +350,13 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 19 fill here ---
+Below are screenshots of our Google Cloud Storage (GCS) bucket showing the data stored for our project:
+
+![GCP Bucket Overview Screenshot](figures/Q19_1.png)
+
+![GCP Bucket Content Screenshot](figures/Q19_2.png)
+
+We primarily use the bucket named ```bash mlops-project-models``` to store trained model artifacts and other relevant files. This ensures that our deployment pipeline can retrieve the latest model version when serving predictions through our API.
 
 ### Question 20
 
@@ -336,7 +365,13 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 20 fill here ---
+We have created an Artifact Registry in Google Cloud Platform (GCP) to store our Docker images. This allows our Cloud Run services to pull container images directly from the registry and ensures proper versioning and management of our builds.
+
+In the registry, we have stored Docker images for our ```bash titanic-inference-api```, which is used to serve predictions based on our trained Titanic model.
+
+![GCP Artifact Registry Screenshot 1](figures/Q20_1.png)
+
+![GCP Artifact Registry Screenshot 2](figures/Q20_2.png)
 
 ### Question 21
 
@@ -345,7 +380,13 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 21 fill here ---
+We use Google Cloud Build to automatically build Docker images from our source code. Each time we push changes to our repository or trigger a new build manually, Cloud Build compiles our code, builds the Docker image, and pushes it to our Artifact Registry.
+
+This ensures a reproducible and auditable pipeline. Our build history shows multiple successful builds, indicating a functioning CI/CD pipeline that integrates source code changes with image deployment.
+
+![GCP Cloud Build History Screenshot](figures/Q21_1.png)
+
+![GCP Cloud Build Single Build History Screenshot](figures/Q21_2.png)
 
 ### Question 22
 
@@ -377,7 +418,9 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 23 fill here ---
+We did manage to write an API for our model. Unlike a typical FastAPI setup, we implemented a Google Cloud Function that wraps our logistic regression model. The API is defined in ```bash main.py```, and deployed using ```bash functions-framework``` via a Docker container. It exposes an HTTP endpoint for predictions and supports both valid and invalid input handling, as well as a health check route.
+
+The model weights are automatically downloaded from a Google Cloud Storage bucket on cold start. We also included input preprocessing logic directly in the API to ensure consistency with our training pipeline. Our API supports JSON requests, and we tested it using both unit tests and integration tests to verify inference behavior and response structure.
 
 ### Question 24
 
@@ -393,7 +436,17 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 24 fill here ---
+We successfully deployed our model API using Google Cloud Functions. We containerized the API using a custom Dockerfile (```bash api.dockerfile```) and used the Functions Framework to expose the ```bash logreg_classifier``` endpoint. Before deploying to the cloud, we verified that the API worked locally by using the ```bash run_local.py``` script. In production, we uploaded the model weights to a GCS bucket and configured the API to load the model from there using environment variables and a service account.
+
+To invoke the API, a user can make a POST request to the trigger URL provided by GCP. For example:
+
+```bash curl -X POST https://REGION-PROJECT.cloudfunctions.net/logreg_classifier \```
+
+```bash -H "Content-Type: application/json" \```
+
+```bash -d '{"instances": [[1, 0, 3, 1, 22, 1, 0]]}'```
+
+This returns a JSON response with the predicted probability from our logistic regression model.
 
 ### Question 25
 
@@ -408,7 +461,11 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 25 fill here ---
+We performed both unit testing and load testing on our API. For unit testing, we created a test file (```bash test_api.py```) under ```bash tests/integrationtests```, which verifies that the API responds correctly to a health check, a valid prediction request, and an invalid input. The purpose of these tests was to confirm that the API returns appropriate responses for both valid and invalid inputs, ensuring its stability across different scenarios.
+
+For load testing, we used Locust and created a ```bash locustfile.py``` under ```bash tests/performancetests```. This simulates multiple concurrent users hitting the API endpoints, measuring response time and failure rate. The load test was run against our locally hosted API and helped us identify how the API performs under pressure.
+
+[During testing, the API was able to handle a moderate number of concurrent users with acceptable response times, but as the number of simulated users increased, we observed slight delays, especially when loading the model from disk on each request. This inspired us to implement model caching during initialization to improve performance under load. The load tests provided valuable insights into the scalability and responsiveness of our API.]
 
 ### Question 26
 
@@ -423,7 +480,8 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 26 fill here ---
+We implemented a data drift monitoring as a production-oriented component. The deployed prediction service logs every inference request by storing the input feature vector, prediction and timestamp in GCS. To enable drift detection, we generated a reference dataset consisting of features only (target removed), using the same preprocessing steps as during model training. The reference dataset represents the baseline distribution the model was trained on. Furthermore, a drift-check API endpoint was implemented. This endpoint loads the reference dataset and the most recent production inputs from CS and computes data drift metrics to indicate whether the incoming data distribution has changed significantly compared to training. This extension was implemented to demonstrate how a deployed model can be monitored after deployment. This monitoring helps when data no longer matches the training distribution. By identifying such drift, the model can be retrained or updated before predictions become unreliable. Data drift is a common cause of performance degradation in production and adding automated drift detection improves robustness and makes the system more maintainable over time.
+
 
 ## Overall discussion of project
 
@@ -442,7 +500,11 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 27 fill here ---
+During the project, our team used a total of approximately $10.73 in credits. The most expensive service was Compute Engine, which accounted for $9.56 of the total usage. This was likely due to its use in model training or image building tasks during development.
+
+Other services used included Cloud Build ($0.55), Artifact Registry ($0.17), and Cloud Run ($0.03). These costs reflect the pipeline steps required to build, store, and deploy Docker containers as part of our CI/CD setup.
+
+Working in the cloud was mostly a positive experience. It allowed us to easily collaborate, deploy models at scale, and automate workflows without needing powerful local machines. The integration between services like Cloud Build, Cloud Run, and Artifact Registry was smooth and helped us understand better real-world MLOps practices.
 
 ### Question 28
 
@@ -458,7 +520,7 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 28 fill here ---
+-----answer here-----
 
 ### Question 29
 
@@ -475,7 +537,19 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 29 fill here ---
+We start in the Local Development environment where we configure and train our model using PyTorch, manage hyperparameters with Hydra, and log training metrics and artifacts using Weights & Biases (W&B). Once the code and model configuration are ready, we commit and push everything to GitHub.
+
+GitHub acts as the central code repository and also triggers GitHub Actions to run our CI/CD pipeline. This includes running unit tests, checking code style (linting), calculating code coverage, and building the Docker image.
+
+The built image is pushed to Artifact Registry in Google Cloud, where we store and version our Docker containers. From here, the image is deployed to Cloud Run, providing an API endpoint for model inference.
+
+The user can now access the deployed API through Cloud Run, which handles prediction requests. Meanwhile, logs, model predictions, and monitoring metrics are collected using W&B and GCP Monitoring tools.
+
+This end-to-end system enables version-controlled, reproducible, and continuously tested ML pipelines — allowing us to easily monitor model performance and retrain when necessary.
+
+![Mlops pipeline](figures/Q29.png)
+
+The figure was manually created in Figma. Relevant logos were sourced from public Google Image searches.
 
 ### Question 30
 
@@ -489,7 +563,13 @@ Link to our docker files: [INDSÆT LINKS HER]
 >
 > Answer:
 
---- question 30 fill here ---
+One of the most time-consuming and technically challenging parts of the project was training and deploying our model in Google Cloud using the Engine. Setting up the correct environment, configuring permissions, writing Dockerfiles, and ensuring the code ran correctly in the cloud required extensive debugging. We faced several issues related to authentication, service accounts, and specifying the correct entry points in our Docker containers before finally succeeding.
+
+Another major struggle was setting up Continuous Integration (CI) using GitHub Actions. Integrating testing, linting, Docker builds, and caching across multiple environments introduced unexpected complexity. At times, the CI pipeline failed due to missing packages or inconsistent Python versions. To fix this, we modularized our CI workflows, added better error logging, and tested the pipeline iteratively until it worked reliably.
+
+Another issue was that several group members had accidentally pushed conflicting versions of the ```bash pyproject.toml``` and ```bash uv.lock``` files. This caused package duplication, inconsistent Python versions across environments, and led to frustrating bugs, particularly with dependencies and import paths. To resolve this, we thoroughly cleaned up the files, standardized Python versions, and agreed on shared conventions for managing the environment going forward.
+
+Finally, implementing data drift detection took considerable time. It involved logging predictions, monitoring input-output distributions, and preparing a pipeline that could retrigger model training based on certain thresholds. While not fully automated, we set up the core monitoring components and created a foundation for future improvements.
 
 ### Question 31
 
@@ -503,6 +583,23 @@ Link to our docker files: [INDSÆT LINKS HER]
 > *Student sXXXXXX was in charge of developing of setting up the initial cookie cutter project and developing of the*
 > *docker containers for training our applications.*
 > *Student sXXXXXX was in charge of training our models in the cloud and deploying them afterwards.*
+> *All members contributed to code by...*
+> *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
+> Answer:
+
+Student s246103 worked on integrating the model into the cloud using GCP services, including Docker containers and deployment pipelines.
+
+Student s246215 focused on building core components of the training and inference pipeline, including model development, data handling, and logging with Weights & Biases.
+
+Student s246070 helped set up the project structure, repository, and worked on monitoring and cloud infrastructure setup in GCP.
+
+Student s245414 was responsible for designing configuration management using Hydra, profiling and helped build a frontend for the API.
+
+Student s240745 handled CI/CD pipelines, data drifting/detection and contributed to code quality assurance, including setting up workflows, linters, and testing infrastructure.
+
+All team members participated in debugging, testing, and iterating on the codebase, and contributed to documentation and final reporting. The work was divided collaboratively, and decisions were made jointly throughout development.
+
+We used ChatGPT and Copilot to assist in debugging, refactoring, and documentation.s in the cloud and deploying them afterwards.*
 > *All members contributed to code by...*
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:

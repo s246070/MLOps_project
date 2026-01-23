@@ -11,11 +11,12 @@ def test_one_training_step_runs():
     criterion = torch.nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
+    # forward pass and loss computation
     logits = model(x)
     loss = criterion(logits, y)
-
+    # backward pass and optimization step
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-
+    # check that loss is finite
     assert torch.isfinite(loss).item() is True

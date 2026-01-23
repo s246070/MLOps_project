@@ -62,31 +62,54 @@ def train(
     for epoch in range(config.epochs):
         # Training
         model.train()
+        correct, total = 0, 0
         epoch_loss = 0.0
+
         for x, y in train_loader:
             x, y = x.to(DEVICE), y.float().to(DEVICE).squeeze()
             logits = model(x).squeeze()
             loss = criterion(logits, y)
-
+            
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             epoch_loss += loss.item()
+            
+            # Beregn korrekt klassificerede eksempler
+            preds = (torch.sigmoid(logits) > 0.5)
+            correct += (preds == y.bool()).sum().item()
+            total += y.numel()
+            
         epoch_loss /= len(train_loader)
-
+        train_accuracy = correct / total if total > 0 else 0.0
+        
         # Validation
         model.eval()
         correct, total = 0, 0
+        val_loss = 0.0
+
         with torch.no_grad():
             for x, y in val_loader:
                 x = x.to(DEVICE)
                 y = y.float().to(DEVICE).squeeze()
-                preds = torch.sigmoid(model(x).squeeze()) > 0.5
+                logits = model(x).squeeze()
+                loss = criterion(logits, y)
+                val_loss += loss.item()
+                
+                preds = torch.sigmoid(logits) > 0.5
                 correct += (preds == y.bool()).sum().item()
                 total += y.numel()
-
+                
         val_accuracy = correct / total if total > 0 else 0.0
-        wandb.log({"epoch": epoch, "train_loss": epoch_loss, "val_accuracy": val_accuracy})
+        val_loss /= len(val_loader)
+        
+        wandb.log({
+            "epoch": epoch,
+            "train_loss": epoch_loss,
+            "train_accuracy": train_accuracy,
+            "val_loss": val_loss,
+            "val_accuracy": val_accuracy
+        })
 
     run.finish()
     os.makedirs("models", exist_ok=True)
