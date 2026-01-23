@@ -7,7 +7,7 @@ Tests the API endpoints locally before deployment to Cloud Run.
 import requests
 import json
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "https://europe-west1-titanic-mlops-484412.cloudfunctions.net/titanic-function"
 
 
 def test_health() -> bool:
