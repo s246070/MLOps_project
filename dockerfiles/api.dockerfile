@@ -3,9 +3,11 @@ ENV UV_PYTHON=python3.13
 ENV PYTHONPATH=/app
 WORKDIR /app
 
+# Copy dependencies
 COPY uv.lock uv.lock
 COPY pyproject.toml pyproject.toml
 COPY README.md README.md
+# Copy sourcecode
 COPY src/ src/
 
 #COPY mlops-api-sa.json /mlops-api-sa.json
@@ -16,6 +18,7 @@ RUN uv sync --locked --no-cache
 
 EXPOSE 8080
 
+# Command to run when container starts
 CMD ["uv", "run", "--no-sync", "functions-framework", "--target", "logreg_classifier", "--source", "src/mlops_project/api/main.py", "--port", "8080", "--signature-type", "http"]
 
 

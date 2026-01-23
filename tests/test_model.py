@@ -12,6 +12,7 @@ def test_model_initialization():
 
 @pytest.mark.parametrize("batch_size", [1, 8, 32])
 def test_forward_output_shape(batch_size):
+    # Check that forward pass produces correct output shape for different batch sizes
     input_dim = 7
     model = LogisticRegressionModel(input_dim)
 
@@ -22,6 +23,7 @@ def test_forward_output_shape(batch_size):
 
 
 def test_forward_with_wrong_input_dim_raises():
+    # check that incorrect input dimension raises an error
     input_dim = 7
     model = LogisticRegressionModel(input_dim)
 
