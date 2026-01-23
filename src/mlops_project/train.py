@@ -130,19 +130,19 @@ def train(cfg: DictConfig) -> None:
     model_dir = Path(cfg.paths.model_dir)
     model_dir.mkdir(parents=True, exist_ok=True)
 
+    # Gem modellen med unik timestamp
+    import datetime
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    model_path = model_dir / f"modelweights_{timestamp}.pth"
-    torch.save(model.state_dict(), model_path)
-    print(f"Model saved to {model_path}")
+    local_path = f"models/modelweights_{timestamp}.pth"
+    torch.save(model.state_dict(), local_path)
 
-    # Optional: Upload to GCS
-    if cfg.paths.upload_gcs:
-        from google.cloud import storage
-        client = storage.Client()
-        bucket = client.bucket(cfg.paths.gcs_bucket)
-        blob_name = f"modelweights_{timestamp}.pth"
-        bucket.blob(blob_name).upload_from_filename(model_path)
-        print(f"Upload complete: {blob_name}")
+    # Upload til GCS med samme unikke navn
+    from google.cloud import storage
+    client = storage.Client()
+    bucket = client.bucket("mlops-project-models")
+    blob_name = f"modelweights_{timestamp}.pth"
+    bucket.blob(blob_name).upload_from_filename(local_path)
+    print(f"Upload complete: {blob_name}")
 
     run.finish()
 
