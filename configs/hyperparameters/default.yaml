@@ -1,5 +1,5 @@
 lr: 0.01
-epochs: 500
+epochs: 500  
 batch_size: 32
-optimizer: "adam"
-weight_decay: 0.0
+optimizer: adam
+weight_decay: 0.00
