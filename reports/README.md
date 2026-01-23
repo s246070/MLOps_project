@@ -480,7 +480,8 @@ For load testing, we used Locust and created a ```bash locustfile.py``` under ``
 >
 > Answer:
 
---- question 26 fill here ---
+We implemented a data drift monitoring as a production-oriented component. The deployed prediction service logs every inference request by storing the input feature vector, prediction and timestamp in GCS. To enable drift detection, we generated a reference dataset consisting of features only (target removed), using the same preprocessing steps as during model training. The reference dataset represents the baseline distribution the model was trained on. Furthermore, a drift-check API endpoint was implemented. This endpoint loads the reference dataset and the most recent production inputs from CS and computes data drift metrics to indicate whether the incoming data distribution has changed significantly compared to training. This extension was implemented to demonstrate how a deployed model can be monitored after deployment. This monitoring helps when data no longer matches the training distribution. By identifying such drift, the model can be retrained or updated before predictions become unreliable. Data drift is a common cause of performance degradation in production and adding automated drift detection improves robustness and makes the system more maintainable over time.
+
 
 ## Overall discussion of project
 
@@ -519,7 +520,7 @@ Working in the cloud was mostly a positive experience. It allowed us to easily c
 >
 > Answer:
 
-We implemented a data drift monitoring as a production-oriented component. The deployed prediction service logs every inference request by storing the input feature vector, prediction and timestamp in GCS. To enable drift detection, we generated a reference dataset consisting of features only (target removed), using the same preprocessing steps as during model training. The reference dataset represents the baseline distribution the model was trained on. Furthermore, a drift-check API endpoint was implemented. This endpoint loads the reference dataset and the most recent production inputs from CS and computes data drift metrics to indicate whether the incoming data distribution has changed significantly compared to training. This extension was implemented to demonstrate how a deployed model can be monitored after deployment. Data drift is a common cause of performance degradation in production and adding automated drift detection improves robustness.
+-----answer here-----
 
 ### Question 29
 
