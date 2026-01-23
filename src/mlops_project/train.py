@@ -134,7 +134,11 @@ def train(cfg: DictConfig) -> None:
     import datetime
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     local_path = f"models/modelweights_{timestamp}.pth"
-    torch.save(model.state_dict(), local_path)
+    # Save state_dict with input_dim metadata for reconstruction in Cloud Functions
+    torch.save({
+        "state_dict": model.state_dict(),
+        "input_dim": input_dim,
+    }, local_path)
 
     # Upload til GCS med samme unikke navn
     from google.cloud import storage

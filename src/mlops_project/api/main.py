@@ -37,8 +37,17 @@ LOG_BUCKET = os.environ.get("DRIFT_BUCKET", os.environ.get("MODEL_BUCKET", "mlop
 LOG_BLOB = os.environ.get("DRIFT_LOG_BLOB", "drift/predictions_log.jsonl")
 
 BUCKET_NAME = os.environ.get("MODEL_BUCKET", "mlops-project-models")
-MODEL_FILE = os.environ.get("MODEL_BLOB", "modelweights.pkl")
+MODEL_FILE = os.environ.get("MODEL_BLOB", "modelweights.pkl")  # Can also be timestamped .pth file
 _MODEL_CACHE = None
+
+def _get_latest_model_blob(bucket, prefix="modelweights"):
+    """Get the most recent model file from GCS bucket."""
+    blobs = list(bucket.list_blobs(prefix=prefix))
+    if not blobs:
+        raise RuntimeError(f"No model files found in bucket {bucket.name} with prefix '{prefix}'")
+    # Sort by updated time, get most recent
+    latest = max(blobs, key=lambda b: b.updated)
+    return latest.name
 
 # Lazy-load mlops_project modules to avoid import errors in Cloud Run
 _MLOPS_MODULES_LOADED = False
@@ -129,16 +138,48 @@ def load_model():
     if _MODEL_CACHE is None:
         # Download model from google cloud storage
         client = storage.Client()
-        blob = client.bucket(BUCKET_NAME).blob(MODEL_FILE)
+        bucket = client.bucket(BUCKET_NAME)
+        
+        # If MODEL_FILE doesn't exist, try to find latest model
+        blob_name = MODEL_FILE
+        if not bucket.blob(blob_name).exists():
+            blob_name = _get_latest_model_blob(bucket)
+        
+        blob = bucket.blob(blob_name)
         model_bytes = blob.download_as_bytes()
-        obj = pickle.loads(model_bytes)
+        
+        # Use torch.load instead of pickle.loads (torch.save uses custom pickle protocol)
+        import io
+        obj = torch.load(io.BytesIO(model_bytes), map_location='cpu')
+        
+        # Check if it's a full PyTorch module
+        if isinstance(obj, nn.Module):
+            obj.eval()
+            _MODEL_CACHE = obj
+            return _MODEL_CACHE
+
+        # Check if it has metadata format: {"state_dict": ..., "input_dim": ...}
+        if isinstance(obj, (dict, OrderedDict)) and "state_dict" in obj and "input_dim" in obj:
+            try:
+                input_dim = int(obj["input_dim"])
+                sd = _strip_module_prefix(obj["state_dict"])
+                _ensure_mlops_modules()
+                model = _LogisticRegressionModel(input_dim)
+                model.load_state_dict(sd, strict=False)
+                model.eval()
+                _MODEL_CACHE = model
+                return _MODEL_CACHE
+            except Exception as e:
+                raise RuntimeError(f"Failed to reconstruct model from metadata format. Error: {e}") from e
+        
+        # Try legacy unwrapping for older formats
         obj = _unwrap_state_payload(obj)
         if isinstance(obj, nn.Module):
             obj.eval()
             _MODEL_CACHE = obj
             return _MODEL_CACHE
 
-        # Try to interpret dict/OrderedDict as a torch state_dict
+        # Try to interpret dict/OrderedDict as a torch state_dict (infer input_dim)
         if isinstance(obj, (dict, OrderedDict)):
             try:
                 sd = _strip_module_prefix(obj)
@@ -148,8 +189,8 @@ def load_model():
                 model.load_state_dict(sd, strict=False)
                 model.eval()
                 _MODEL_CACHE = model
-            except Exception:
-                _MODEL_CACHE = obj
+            except Exception as e:
+                raise RuntimeError(f"Failed to reconstruct model from state_dict. Ensure modelweights.pkl contains either a full PyTorch module or a dict with 'state_dict' and 'input_dim' keys. Error: {e}") from e
         else:
             # sklearn or other pickled estimator/object
             _MODEL_CACHE = obj
