@@ -282,7 +282,7 @@ We created three separate Dockerfiles to support the key stages of our pipeline:
 
 To run our API container locally for testing, we used ` docker build -f dockerfiles/api.dockerfile -t api .` followed by ` docker run -p 8080:8080 api`, which exposes the API on port 8080.
 
-Link to our docker files: [INDSÆT LINKS HER]
+Link to our docker files: (https://github.com/s246070/MLOps_project/tree/main/dockerfiles)
 
 ### Question 16
 
