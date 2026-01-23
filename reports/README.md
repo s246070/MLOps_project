@@ -30,7 +30,7 @@ s246103, s246215, s246070, s245414, s240745
 >
 > Answer:
 
-We did not use any open-source packages outside the course-provided tools and libraries. All dependencies we relied on, including FastAPI, scikit-learn, Hydra, Google Cloud SDK packages, Weights & Biases, and profiling or visualization tools like TensorBoard, SnakeViz, and memory-profiler, were part of the curriculum.
+We did not use any open-source packages outside the course-provided tools and libraries. All dependencies we relied on, including Function-Framework, scikit-learn, Hydra, Google Cloud SDK packages, Weights & Biases, and profiling or visualization tools like TensorBoard, SnakeViz, and memory-profiler, were part of the curriculum.
 All dependencies are documented in our ```bash pyproject.toml ```.
 
 ## Coding environment
@@ -519,7 +519,7 @@ Working in the cloud was mostly a positive experience. It allowed us to easily c
 >
 > Answer:
 
---- question 28 fill here ---
+We implemented a data drift monitoring as a production-oriented component. The deployed prediction service logs every inference request by storing the input feature vector, prediction and timestamp in GCS. To enable drift detection, we generated a reference dataset consisting of features only (target removed), using the same preprocessing steps as during model training. The reference dataset represents the baseline distribution the model was trained on. Furthermore, a drift-check API endpoint was implemented. This endpoint loads the reference dataset and the most recent production inputs from CS and computes data drift metrics to indicate whether the incoming data distribution has changed significantly compared to training. This extension was implemented to demonstrate how a deployed model can be monitored after deployment. Data drift is a common cause of performance degradation in production and adding automated drift detection improves robustness.
 
 ### Question 29
 
