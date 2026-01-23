@@ -463,6 +463,12 @@ This returns a JSON response with the predicted probability from our logistic re
 
 We performed both unit testing and load testing on our API. For unit testing, we created a test file (` test_api.py`) under ` tests/integrationtests`, which verifies that the API responds correctly to a health check, a valid prediction request, and an invalid input. The purpose of these tests was to confirm that the API returns appropriate responses for both valid and invalid inputs, ensuring its stability across different scenarios.
 
+To run the tests online with Cloud Run you use:
+
+` API_URL=<api-service-url>`
+
+` uv run pytest tests/integrationtests/test_api.py`
+
 For load testing, we used Locust and created a ` locustfile.py` under ` tests/performancetests`. This simulates multiple concurrent users hitting the API endpoints, measuring response time and failure rate. The load test was run against our locally hosted API and helped us identify how the API performs under pressure.
 
 ### Question 26
