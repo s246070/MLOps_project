@@ -401,7 +401,7 @@ This ensures a reproducible and auditable pipeline. Our build history shows mult
 >
 > Answer:
 
---- question 22 fill here ---
+We initially tried to train the model with vertex AI, but could not make it work properly. So we ended up using the Engine instead, creating a virtual machine instance (titanic-engine). In the vm we started a docker container, which included all the necessary dependencies. The vm executed the training and automatically saved the model weights to a google cloud bucket.
 
 ## Deployment
 
