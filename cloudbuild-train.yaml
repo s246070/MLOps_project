@@ -1,5 +1,5 @@
 steps:
-  # Step 1: Build the training Docker image
+  # Build the training Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -9,7 +9,7 @@ steps:
       - 'dockerfiles/train.dockerfile'
       - '.'
 
-  # Step 2: Push the image to Container Registry
+  # Push the image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
