@@ -1,7 +1,7 @@
 import os
 import requests
 
-API_URL = os.getenv("API_URL")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8080").rstrip("/")
 
 def test_health_check():
     """
@@ -22,7 +22,7 @@ def test_valid_prediction():
     - the response contains prediction-related fields
     """
     data = {
-        "instances": [3, "male", 22.0, 1, 0, 7.25, "s"]
+        "instances": [3, "male", 22.0, 1, 0, 7.25, "S"]
     }
 
     response = requests.post(f"{API_URL}/", json=data)
